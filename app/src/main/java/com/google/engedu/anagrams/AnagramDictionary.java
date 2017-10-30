@@ -101,6 +101,14 @@ public class AnagramDictionary {
     }
 
     public String pickGoodStarterWord() {
-        return "stop";
+//        Pick a random starting point in the wordList array and check each word in the array until you find one that has at least MIN_NUM_ANAGRAMS
+//        anagrams. Be sure to handle wrapping around to the start of the array if needed.
+        int indexOfWord = random.nextInt(wordList.size());
+        if(getAnagramsWithOneMoreLetter(sortLetters(wordList.get(indexOfWord))).size() >= 5){
+            return wordList.get(indexOfWord);
+        }
+        else{
+            return pickGoodStarterWord();
+        }
     }
 }
