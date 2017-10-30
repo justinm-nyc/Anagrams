@@ -30,10 +30,12 @@ public class AnagramDictionary {
     private static final int MIN_NUM_ANAGRAMS = 5;
     private static final int DEFAULT_WORD_LENGTH = 3;
     private static final int MAX_WORD_LENGTH = 7;
+    private int wordLength = DEFAULT_WORD_LENGTH;
     private Random random = new Random();
     ArrayList<String> wordList = new ArrayList<String>();
     HashSet<String> wordSet = new HashSet<String>();
     HashMap<String, ArrayList<String>>  lettersToWord = new  HashMap<String, ArrayList<String>> ();
+    HashMap<Integer, ArrayList<String>> sizeToWords = new HashMap<>();
 //As you process the input words, call sortLetters on each of them then check whether lettersToWord already contains an entry for that key.
 // If it does, add the current word to ArrayList at that key. Otherwise, create a new ArrayList, add the word to it and store in the HashMap with the corresponding key.
     public AnagramDictionary(Reader reader) throws IOException {
@@ -41,6 +43,15 @@ public class AnagramDictionary {
         String line;
         while((line = in.readLine()) != null) {
             String word = line.trim();
+
+            if(sizeToWords.containsKey(word.length())){
+                sizeToWords.get(word.length()).add(word);
+            }else{
+                ArrayList<String> ana = new ArrayList<String>();
+                sizeToWords.put(word.length(),ana);
+                sizeToWords.get(word.length()).add(word);
+            }
+
             if(lettersToWord.containsKey(sortLetters(word))){
                 lettersToWord.get(sortLetters(word)).add(word);
             }else{
@@ -101,14 +112,16 @@ public class AnagramDictionary {
     }
 
     public String pickGoodStarterWord() {
-//        Pick a random starting point in the wordList array and check each word in the array until you find one that has at least MIN_NUM_ANAGRAMS
-//        anagrams. Be sure to handle wrapping around to the start of the array if needed.
+
         int indexOfWord = random.nextInt(wordList.size());
-        if(getAnagramsWithOneMoreLetter(sortLetters(wordList.get(indexOfWord))).size() >= 5){
+
+        if((getAnagramsWithOneMoreLetter(sortLetters(wordList.get(indexOfWord))).size() >= 5) && (wordLength == (wordList.get(indexOfWord).length()))){
+
+            if(wordLength < MAX_WORD_LENGTH){
+               wordLength = wordLength + 1;
+            }
             return wordList.get(indexOfWord);
         }
-        else{
-            return pickGoodStarterWord();
-        }
+        else return pickGoodStarterWord();
     }
 }
